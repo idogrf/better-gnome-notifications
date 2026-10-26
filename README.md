@@ -73,12 +73,24 @@ the same banners.
 Open the gear icon in Extensions Manager, or `gnome-extensions prefs
 better-gnome-notifications@idogr`.
 
-- **Appearance:** position, color style, material, tone, text size, entrance,
-  width, corner radius.
-- **Apps:** the rules, with a color picker per rule. The defaults cover Slack,
-  WhatsApp, Gmail, Google Calendar, Claude Code and Gantry.
+Each page opens with a preview: a corner of your wallpaper with the stack
+drawn in the chosen position, look and size, redrawn as you change settings.
+
+- **Appearance:** position, material and tone as picture choices; text size,
+  width, corner radius, color style and entrance.
+- **Apps:** the rules, each with a color picker, an action and a **Test**
+  button. The defaults cover Slack, WhatsApp, Gmail, Google Calendar, Claude
+  Code and Gantry.
 - **Behavior:** stack size, normal and critical timeouts, the countdown line,
   rate limit, and grouping.
+
+**Send burst** (Appearance and Behavior) sends notifications from your first
+few rules, then a critical one. A rule's **Test** sends one notification built
+so the rule's patterns match it, and says when something will keep it from
+showing a banner: an earlier rule matching first, the rule's action, Do Not
+Disturb or the rate limit. For a pattern too complex to build a match from,
+the button turns off. Tests go out through `notify-send` (from libnotify), so
+they carry the app name the rule expects.
 
 Rules are stored as JSON in the `rules` key, so they can also be set with
 `gsettings`:
@@ -106,7 +118,8 @@ the notification to its own stack (`deck.js`) instead of the tray's single
 banner slot. Each card wraps the shell's own `NotificationMessage` widget, so
 clicking, closing, expanding and action buttons behave as they do in GNOME.
 
-Rules and the rate limit run earlier, in `Source.addNotification`: marking a
+Rules (`rules.js`, shared with the settings window so its tests match the same
+way) and the rate limit run earlier, in `Source.addNotification`: marking a
 notification acknowledged before the source asks for a banner skips the banner
 while the notification still lands in the list.
 
@@ -124,7 +137,8 @@ see-through, and it shows around the corners and through the glass.
 
 The choices live in `options.js`. To add one, list it there, add it to the
 key's `<choices>` in the schema, and implement it in `STYLES` (`look.js`) or
-`ENTRANCES` (`deck.js`).
+`ENTRANCES` (`deck.js`). The settings preview draws cards itself
+(`Preview` in `prefs.js`), so a new color style needs drawing there too.
 
 ## Testing
 

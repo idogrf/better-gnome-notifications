@@ -9,17 +9,12 @@ import * as MessageList from 'resource:///org/gnome/shell/ui/messageList.js';
 import {NotificationDestroyedReason, Urgency} from 'resource:///org/gnome/shell/ui/messageTray.js';
 
 import {FrostedBackdrop} from './backdrop.js';
-import {styleBanner} from './look.js';
+import {SHRINK, SPREAD, styleBanner} from './look.js';
 
 const MOVE_TIME = 380;
 const EXIT_TIME = 260;
 const BODY_FADE_TIME = 180;
 
-// A full stack is this much taller than its front card; the extra height is
-// shared out between the cards behind, so more cards means thinner edges.
-const SPREAD = 0.3;
-// Each card further back is this much narrower.
-const SHRINK = 0.05;
 // Space between cards when the deck fans out.
 const GAP = 8;
 // How long the pointer can be off the deck before it folds back, so moving

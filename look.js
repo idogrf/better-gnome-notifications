@@ -4,10 +4,16 @@
 // on top of the CSS width, so they come off the width setting.
 const BANNER_CHROME = 24;
 
+// A full stack is this much taller than its front card; the extra height is
+// shared out between the cards behind, so more cards means thinner edges.
+export const SPREAD = 0.3;
+// Each card further back is this much narrower.
+export const SHRINK = 0.05;
+
 // The banner's base fill as [r, g, b, alpha], by tone and material. `stacked`
 // is for cards that aren't in front: they skip the blur, so they need a
 // denser fill to stay readable.
-const GLASS = {
+export const GLASS = {
     dark: {
         solid: [40, 42, 49, 1],
         translucent: [40, 42, 49, 0.78],
@@ -28,15 +34,19 @@ const STYLES = {
     tint: (glass, color) => {
         if (!color)
             return `background-color: ${rgba(glass)};`;
-        // The colored end is a little more opaque than the glass, so the
-        // wash still reads over a busy desktop.
-        const start = mix(glass, color, 0.55);
-        start[3] = Math.min(1, glass[3] + 0.15);
         return 'background-gradient-direction: horizontal;' +
-            `background-gradient-start: ${rgba(start)};` +
+            `background-gradient-start: ${rgba(tintStart(glass, color))};` +
             `background-gradient-end: ${rgba(glass)};`;
     },
 };
+
+// The colored end of the tint, which fades into the glass. It is a little
+// more opaque than the glass, so the wash still reads over a busy desktop.
+export function tintStart(glass, color) {
+    const start = mix(glass, color, 0.55);
+    start[3] = Math.min(1, glass[3] + 0.15);
+    return start;
+}
 
 export function parseHex(hex) {
     const match = /^#?([0-9a-f]{6})$/i.exec(hex ?? '');

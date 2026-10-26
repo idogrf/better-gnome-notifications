@@ -4,39 +4,9 @@ import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
 import {FdoNotificationDaemonSource} from 'resource:///org/gnome/shell/ui/notificationDaemon.js';
 
 import {Deck} from './deck.js';
-import {parseHex} from './look.js';
+import {compileRules, matchRule} from './rules.js';
 
 const {Urgency, NotificationDestroyedReason} = MessageTray;
-
-function compileRules(json) {
-    let rules;
-    try {
-        rules = JSON.parse(json);
-    } catch (e) {
-        console.warn(`Better GNOME Notifications: ignoring unreadable rules: ${e.message}`);
-        return [];
-    }
-
-    const compile = pattern => {
-        if (!pattern)
-            return null;
-        try {
-            return new RegExp(pattern, 'i');
-        } catch (e) {
-            console.warn(`Better GNOME Notifications: ignoring bad pattern ${pattern}: ${e.message}`);
-            return /$^/;
-        }
-    };
-
-    return rules.map((rule, index) => ({
-        id: `rule ${index}`,
-        action: rule.action ?? 'show',
-        color: parseHex(rule.color),
-        app: compile(rule.app),
-        title: compile(rule.title),
-        body: compile(rule.body),
-    }));
-}
 
 export default class BetterGnomeNotificationsExtension extends Extension {
     enable() {
@@ -75,13 +45,6 @@ export default class BetterGnomeNotificationsExtension extends Extension {
         this._rules = compileRules(this._settings.get_string('rules'));
     }
 
-    _matchRule(appName, title, body) {
-        return this._rules.find(rule =>
-            (!rule.app || rule.app.test(appName ?? '')) &&
-            (!rule.title || rule.title.test(title ?? '')) &&
-            (!rule.body || rule.body.test(body ?? ''))) ?? null;
-    }
-
     // True when `sender` had a banner less than the rate limit ago. Only
     // banners that show restart the clock, so a steady stream still gets one
     // through every interval.
@@ -111,7 +74,7 @@ export default class BetterGnomeNotificationsExtension extends Extension {
                     return;
                 }
 
-                const rule = extension._matchRule(this.title, notification.title, notification.body);
+                const rule = matchRule(extension._rules, this.title, notification.title, notification.body);
                 if (rule)
                     extension._ruleFor.set(notification, rule);
 
