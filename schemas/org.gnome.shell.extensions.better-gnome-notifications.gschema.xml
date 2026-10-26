@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.better-gnome-notifications"
+          path="/org/gnome/shell/extensions/better-gnome-notifications/">
+    <key name="style" type="s">
+      <choices>
+        <choice value="tint"/>
+      </choices>
+      <default>'tint'</default>
+      <summary>Color style</summary>
+      <description>How a banner shows its app's color.</description>
+    </key>
+    <key name="position" type="s">
+      <choices>
+        <choice value="top-left"/>
+        <choice value="top-center"/>
+        <choice value="top-right"/>
+        <choice value="bottom-left"/>
+        <choice value="bottom-center"/>
+        <choice value="bottom-right"/>
+      </choices>
+      <default>'top-right'</default>
+      <summary>Banner position</summary>
+      <description>Corner or edge of the primary monitor where banners appear.</description>
+    </key>
+    <key name="material" type="s">
+      <choices>
+        <choice value="solid"/>
+        <choice value="translucent"/>
+        <choice value="frost"/>
+      </choices>
+      <default>'frost'</default>
+      <summary>Banner material</summary>
+      <description>Solid fill, see-through fill, or see-through with the desktop behind blurred.</description>
+    </key>
+    <key name="tone" type="s">
+      <choices>
+        <choice value="dark"/>
+        <choice value="light"/>
+      </choices>
+      <default>'dark'</default>
+      <summary>Banner tone</summary>
+      <description>Dark glass with light text, or light glass with dark text.</description>
+    </key>
+    <key name="text-size" type="s">
+      <choices>
+        <choice value="small"/>
+        <choice value="medium"/>
+      </choices>
+      <default>'small'</default>
+      <summary>Text size</summary>
+      <description>Size of the banner's app name, title and body.</description>
+    </key>
+    <key name="width" type="i">
+      <range min="280" max="480"/>
+      <default>360</default>
+      <summary>Banner width</summary>
+      <description>Width of a banner in logical pixels.</description>
+    </key>
+    <key name="corner-radius" type="i">
+      <range min="0" max="28"/>
+      <default>14</default>
+      <summary>Corner radius</summary>
+      <description>Corner radius of a banner in logical pixels.</description>
+    </key>
+    <key name="entrance" type="s">
+      <choices>
+        <choice value="slide"/>
+      </choices>
+      <default>'slide'</default>
+      <summary>Entrance animation</summary>
+      <description>How a banner arrives and leaves.</description>
+    </key>
+    <key name="max-cards" type="i">
+      <range min="1" max="5"/>
+      <default>5</default>
+      <summary>Stack size</summary>
+      <description>Most banners on screen at once. A new one past this makes the oldest leave early; it stays in the notification list. 1 shows one banner at a time.</description>
+    </key>
+    <key name="normal-timeout" type="i">
+      <range min="2" max="30"/>
+      <default>5</default>
+      <summary>Normal timeout</summary>
+      <description>Seconds a banner stays on screen. The countdown pauses while the pointer is on the stack and waits until the user is active.</description>
+    </key>
+    <key name="critical-timeout" type="i">
+      <range min="10" max="120"/>
+      <default>30</default>
+      <summary>Critical timeout</summary>
+      <description>Seconds a critical banner stays on screen.</description>
+    </key>
+    <key name="countdown" type="b">
+      <default>true</default>
+      <summary>Show countdown</summary>
+      <description>Whether each banner shows a line that shrinks as its time runs out.</description>
+    </key>
+    <key name="rules" type="s">
+      <default>'[{"name":"Slack","app":"^Slack$","title":"","body":"","color":"#5b8def","action":"show"},{"name":"WhatsApp","app":"","title":"","body":"web\\\\.whatsapp\\\\.com","color":"#25c26a","action":"show"},{"name":"Gmail","app":"","title":"","body":"mail\\\\.google\\\\.com","color":"#e0566b","action":"show"},{"name":"Google Calendar","app":"","title":"","body":"calendar\\\\.google\\\\.com","color":"#8b6cf0","action":"show"},{"name":"Claude","app":"(Finished|Needs permission|Needs input|Waiting for you|Signed in|Quota)$","title":"","body":"","color":"#e09a6a","action":"show"},{"name":"Gantry","app":"^Gantry$","title":"","body":"","color":"#e0b84c","action":"show"}]'</default>
+      <summary>App rules</summary>
+      <description>JSON list of rules, checked in order; the first match wins. Each has a name, case-insensitive regular expressions for the app name, title and body (empty matches anything), a hex color, and an action: show, silence (list only, no banner) or block.</description>
+    </key>
+    <key name="rate-limit" type="i">
+      <range min="0" max="60000"/>
+      <default>2000</default>
+      <summary>Banner rate limit</summary>
+      <description>Milliseconds after an app's banner during which further notifications from that app skip the banner and only go to the list. 0 turns this off.</description>
+    </key>
+    <key name="group-by-app" type="b">
+      <default>false</default>
+      <summary>Group notifications by app</summary>
+      <description>Whether the notification list groups an app's notifications together. When off, each notification gets its own entry.</description>
+    </key>
+  </schema>
+</schemalist>

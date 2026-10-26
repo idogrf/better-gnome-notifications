@@ -1,0 +1,2 @@
+# build output — regenerate with: glib-compile-schemas schemas/
+schemas/gschemas.compiled

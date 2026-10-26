@@ -1,0 +1,8 @@
+{
+  "uuid": "better-gnome-notifications@idogr",
+  "name": "Better GNOME Notifications",
+  "description": "Turns notification banners into a stack of narrow frosted cards in the corner you pick, tinted with each app's color, each with its own timer. Critical notifications stand out in red. Also limits banner bursts, filters notifications by rule, and keeps one list entry per notification.",
+  "shell-version": ["50"],
+  "settings-schema": "org.gnome.shell.extensions.better-gnome-notifications",
+  "version": 1
+}

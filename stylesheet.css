@@ -1,0 +1,175 @@
+/* Width, corner radius and background are set inline per banner from the
+   settings; everything else lives here. Selectors are long on purpose, to
+   outrank shell themes, which style banners through `.message ...` chains. */
+
+.message.notification-banner.bn-banner {
+  margin: 10px;
+  padding: 9px 12px 11px 10px;
+  min-height: 0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: none;
+  color: #f4f6fa;
+}
+
+/* Shadows come from a separate rounded layer under each banner
+   (.bn-card-shadow): on the banner itself St draws them square. */
+.bn-card-shadow {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+/* Cards behind the front one cast a lighter shadow, enough to set their
+   edges off from the card in front. */
+.bn-card-shadow.bn-behind {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+/* Critical: a red hairline, and a red glow in place of the shadow. */
+.message.notification-banner.bn-banner.bn-critical {
+  border-color: rgba(255, 92, 92, 0.9);
+}
+
+.bn-card-shadow.bn-critical {
+  box-shadow: 0 0 22px rgba(255, 70, 70, 0.45);
+}
+
+/* The line that shrinks as a banner's time runs out. */
+.message.notification-banner.bn-banner .bn-countdown {
+  height: 2px;
+  margin-top: 8px;
+  border-radius: 1px;
+  background-color: rgba(244, 246, 250, 0.35);
+}
+
+.message.notification-banner.bn-light .bn-countdown {
+  background-color: rgba(27, 29, 34, 0.3);
+}
+
+.message.notification-banner.bn-banner .message-header {
+  padding: 0;
+  spacing: 6px;
+}
+
+.message.notification-banner.bn-banner .message-header .message-source-icon {
+  icon-size: 14px;
+}
+
+.message.notification-banner.bn-banner .message-header .message-header-content {
+  spacing: 6px;
+  min-height: 0;
+}
+
+.message.notification-banner.bn-banner .message-header .message-header-content .message-source-title,
+.message.notification-banner.bn-banner .message-header .message-header-content .event-time {
+  font-weight: 500;
+  color: rgba(244, 246, 250, 0.55);
+}
+
+.message.notification-banner.bn-banner .message-header .message-close-button {
+  padding: 2px;
+  min-width: 0;
+  min-height: 0;
+  icon-size: 12px;
+  color: rgba(244, 246, 250, 0.7);
+}
+
+.message.notification-banner.bn-banner .message-box {
+  padding: 4px 0 0 0;
+  spacing: 10px;
+}
+
+.message.notification-banner.bn-banner .message-box .message-icon {
+  icon-size: 32px;
+  border-radius: 8px;
+  margin: 0;
+}
+
+.message.notification-banner.bn-banner .message-box .message-content {
+  spacing: 1px;
+  padding: 0;
+}
+
+.message.notification-banner.bn-banner .message-box .message-content .message-title {
+  font-weight: 600;
+  color: #f4f6fa;
+}
+
+.message.notification-banner.bn-banner .message-box .message-content .message-body {
+  color: rgba(244, 246, 250, 0.75);
+}
+
+.message.notification-banner.bn-banner .notification-buttons-bin {
+  padding-top: 8px;
+  spacing: 6px;
+}
+
+.message.notification-banner.bn-banner .notification-button {
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f4f6fa;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.message.notification-banner.bn-banner .notification-button:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Text sizes */
+
+.message.notification-banner.bn-text-small .message-header .message-header-content .message-source-title,
+.message.notification-banner.bn-text-small .message-header .message-header-content .event-time {
+  font-size: 11px;
+}
+.message.notification-banner.bn-text-small .message-box .message-content .message-title {
+  font-size: 13px;
+}
+.message.notification-banner.bn-text-small .message-box .message-content .message-body {
+  font-size: 12.5px;
+}
+
+.message.notification-banner.bn-text-medium .message-header .message-header-content .message-source-title,
+.message.notification-banner.bn-text-medium .message-header .message-header-content .event-time {
+  font-size: 11.5px;
+}
+.message.notification-banner.bn-text-medium .message-box .message-content .message-title {
+  font-size: 14px;
+}
+.message.notification-banner.bn-text-medium .message-box .message-content .message-body {
+  font-size: 13.5px;
+}
+
+/* Light tone */
+
+.message.notification-banner.bn-banner.bn-light {
+  color: #1b1d22;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.message.notification-banner.bn-light .message-header .message-header-content .message-source-title,
+.message.notification-banner.bn-light .message-header .message-header-content .event-time {
+  color: rgba(27, 29, 34, 0.55);
+}
+
+.message.notification-banner.bn-light .message-header .message-close-button {
+  color: rgba(27, 29, 34, 0.7);
+}
+
+.message.notification-banner.bn-light .message-box .message-content .message-title {
+  color: #1b1d22;
+}
+
+.message.notification-banner.bn-light .message-box .message-content .message-body {
+  color: rgba(27, 29, 34, 0.75);
+}
+
+.message.notification-banner.bn-light .notification-button {
+  color: #1b1d22;
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+.message.notification-banner.bn-light .notification-button:hover {
+  background-color: rgba(0, 0, 0, 0.13);
+}
