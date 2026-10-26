@@ -74,7 +74,7 @@ export class FrostedBackdrop {
 
         // Clipped to its allocation so the blur only processes the area
         // around the banner, not the whole clone.
-        this._pane = new Clutter.Actor({clip_to_allocation: true});
+        this._pane = new Clutter.Actor({clip_to_allocation: true, x: -BLEED, y: -BLEED});
         this._pane.add_effect(new Shell.BlurEffect({
             mode: Shell.BlurMode.ACTOR,
             radius: BLUR_RADIUS,
@@ -98,9 +98,14 @@ export class FrostedBackdrop {
         const [x, y] = this.actor.get_transformed_position();
         if (!Number.isFinite(x) || !Number.isFinite(y))
             return;
-        this._pane.set_position(-BLEED, -BLEED);
-        this._pane.set_size(this.actor.width + 2 * BLEED, this.actor.height + 2 * BLEED);
-        this._clone.set_position(BLEED - x, BLEED - y);
+        // Only resized when the banner is, and the clone moved by
+        // translation: setting either's geometry on every frame of an
+        // animation leaves them waiting for a relayout each frame.
+        const width = this.actor.width + 2 * BLEED;
+        const height = this.actor.height + 2 * BLEED;
+        if (this._pane.width !== width || this._pane.height !== height)
+            this._pane.set_size(width, height);
+        this._clone.set_translation(BLEED - x, BLEED - y, 0);
     }
 
     destroy() {
