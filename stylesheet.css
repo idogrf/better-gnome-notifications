@@ -158,6 +158,11 @@
   border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Restated, as the light border above would otherwise cover it. */
+.message.bn-card.bn-banner.bn-light.bn-critical {
+  border-color: rgba(255, 92, 92, 0.9);
+}
+
 .message.bn-card.bn-light .message-header .message-header-content .message-source-title,
 .message.bn-card.bn-light .message-header .message-header-content .event-time {
   color: rgba(27, 29, 34, 0.55);
