@@ -110,5 +110,10 @@
       <summary>Group notifications by app</summary>
       <description>Whether the notification list groups an app's notifications together. When off, each notification gets its own entry.</description>
     </key>
+    <key name="style-list" type="b">
+      <default>true</default>
+      <summary>Style the notification list</summary>
+      <description>Whether entries in the date menu's notification list take the banners' look: app color, tone, material, text size and corner radius.</description>
+    </key>
   </schema>
 </schemalist>

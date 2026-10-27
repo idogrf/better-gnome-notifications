@@ -91,7 +91,7 @@ export function styleBanner(banner, settings, {color, critical, front, overOverv
         material = 'translucent';
 
     banner.set_style_class_name([
-        'message', 'notification-banner', 'bn-banner',
+        'message', 'notification-banner', 'bn-card', 'bn-banner',
         `bn-${tone}`, `bn-${material}`, `bn-text-${settings.get_string('text-size')}`,
         ...critical ? ['bn-critical'] : [],
     ].join(' '));
@@ -101,4 +101,36 @@ export function styleBanner(banner, settings, {color, critical, front, overOverv
         style(GLASS[tone][material], color));
 
     return material;
+}
+
+/**
+ * Style an entry in the notification list like a banner.
+ *
+ * @param {St.Widget} message - The list's NotificationMessage.
+ * @param {Gio.Settings} settings - The extension's settings.
+ * @param {object} params - What the entry shows.
+ * @param {number[]|null} params.color - The app's color from its rule, as [r, g, b].
+ * @param {boolean} params.critical - Whether the notification is critical.
+ */
+export function styleListed(message, settings, {color, critical}) {
+    const tone = settings.get_string('tone');
+    const style = STYLES[settings.get_string('style')] ?? STYLES.tint;
+    // The menu's own background is all that's behind an entry, so frost
+    // would have nothing to blur.
+    const material = settings.get_string('material') === 'solid' ? 'solid' : 'translucent';
+
+    message.set_style_class_name([
+        'message', 'bn-card', 'bn-banner', 'bn-listed',
+        `bn-${tone}`, `bn-${material}`, `bn-text-${settings.get_string('text-size')}`,
+        ...critical ? ['bn-critical'] : [],
+    ].join(' '));
+    message.set_style(
+        `border-radius: ${settings.get_int('corner-radius')}px;` +
+        style(GLASS[tone][material], color));
+}
+
+// Gives a list entry back its stock look.
+export function unstyleListed(message) {
+    message.set_style_class_name('message');
+    message.set_style(null);
 }

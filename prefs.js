@@ -748,6 +748,9 @@ export default class BetterGnomeNotificationsPreferences extends ExtensionPrefer
         const list = new Adw.PreferencesGroup({title: 'Notification list'});
         list.add(this._switchRow('group-by-app', 'Group notifications by app',
             'When off, every notification gets its own entry in the list.'));
+        list.add(this._switchRow('style-list', 'Match the banners',
+            'Entries take the banners’ app colors, tone, material, text size and corner ' +
+            'radius. Frost shows as plain glass, since the menu is solid behind them.'));
         page.add(list);
 
         page.add(this._burstGroup('See the stack size, timeouts and countdown in action.'));

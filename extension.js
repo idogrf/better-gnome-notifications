@@ -1,12 +1,17 @@
 import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as MessageList from 'resource:///org/gnome/shell/ui/messageList.js';
 import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
 import {FdoNotificationDaemonSource} from 'resource:///org/gnome/shell/ui/notificationDaemon.js';
 
 import {Deck} from './deck.js';
+import {styleListed, unstyleListed} from './look.js';
 import {compileRules, matchRule} from './rules.js';
 
 const {Urgency, NotificationDestroyedReason} = MessageTray;
+
+// Settings the notification list's entries are restyled for.
+const LIST_KEYS = ['style-list', 'rules', 'style', 'tone', 'material', 'text-size', 'corner-radius'];
 
 export default class BetterGnomeNotificationsExtension extends Extension {
     enable() {
@@ -32,9 +37,18 @@ export default class BetterGnomeNotificationsExtension extends Extension {
         this._injectAddNotification();
         this._injectBanners();
         this._injectGrouping();
+        this._injectList();
+
+        this._settings.connectObject('changed', (_, key) => {
+            if (LIST_KEYS.includes(key))
+                this._styleList();
+        }, this);
+        this._styleList();
     }
 
     disable() {
+        this._listMessages().forEach(unstyleListed);
+
         this._injections.clear();
         this._injections = null;
 
@@ -176,5 +190,47 @@ export default class BetterGnomeNotificationsExtension extends Extension {
                 Main.messageTray.add(source);
                 return source;
             });
+    }
+
+    // Styles each entry the notification list adds like a banner.
+    _injectList() {
+        const extension = this;
+        this._injections.overrideMethod(MessageList.NotificationMessageGroup.prototype, '_addNotification',
+            original => function (notification) {
+                original.call(this, notification);
+                const message = this._notificationToMessage.get(notification);
+                if (message)
+                    extension._styleMessage(message);
+            });
+    }
+
+    // The entries in the date menu's notification list. The list keeps one
+    // group per source, which holds that source's notifications.
+    _listMessages() {
+        const view = Main.panel.statusArea.dateMenu?._messageList?._messageView;
+        if (!view)
+            return [];
+        return [...view._notificationSourceToGroup.values()]
+            .flatMap(group => [...group._notificationToMessage.values()]);
+    }
+
+    _styleList() {
+        this._listMessages().forEach(message => this._styleMessage(message));
+    }
+
+    // Matched afresh rather than with the rule kept from arrival, so an
+    // edited rule recolors what's already in the list.
+    _styleMessage(message) {
+        const notification = message.notification;
+        if (!notification || !this._settings.get_boolean('style-list')) {
+            unstyleListed(message);
+            return;
+        }
+
+        const rule = matchRule(this._rules, notification.source?.title, notification.title, notification.body);
+        styleListed(message, this._settings, {
+            color: rule?.color ?? null,
+            critical: notification.urgency === Urgency.CRITICAL,
+        });
     }
 }

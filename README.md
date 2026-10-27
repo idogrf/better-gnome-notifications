@@ -44,6 +44,10 @@ This one takes the banner over entirely: position, look, timing and stacking.
   counts as its own sender, so a WhatsApp message doesn't hold up a Gmail one.
 - **One entry per notification.** The notification list normally groups each
   app's notifications together; this turns that off. Configurable.
+- **Matching list.** Entries in the date menu's notification list take the
+  banners' look: app color, tone, glass, text size and corner radius. Frost
+  shows as plain glass there, since the menu is solid behind them. The media
+  player stays as GNOME draws it. Can be turned off.
 
 Do Not Disturb and fullscreen still let only critical notifications through,
 and banners hide while the notification list is open. Notifications that
@@ -85,7 +89,7 @@ drawn in the chosen position, look and size, redrawn as you change settings.
   button. The defaults cover Slack, WhatsApp, Gmail, Google Calendar, Claude
   Code and Gantry.
 - **Behavior:** stack size, normal and critical timeouts, the countdown line,
-  rate limit, and grouping.
+  rate limit, grouping, and whether the notification list matches the banners.
 
 **Send burst** (Appearance and Behavior) sends notifications from your first
 few rules, then a critical one. A rule's **Test** sends one notification built
@@ -126,6 +130,11 @@ way) and the rate limit run earlier, in `Source.addNotification`: marking a
 notification acknowledged before the source asks for a banner skips the banner
 while the notification still lands in the list.
 
+The notification list's entries are the same `NotificationMessage` widget.
+The extension styles each one as the list adds it (an override of
+`NotificationMessageGroup._addNotification`), restyles them all when a setting
+changes, and restores the stock look when turned off.
+
 GNOME's background blur can't be given rounded corners: masking it needs an
 offscreen pass, which hides the framebuffer the blur reads from. So the
 frosted backdrop (`backdrop.js`) blurs a live clone of the window group,
@@ -164,7 +173,8 @@ restart the nested shell after each change.
 ## Caveats
 
 - **The message tray internals are private API.** `_onNotificationRequestBanner`,
-  `Source.addNotification` and the notification daemon's source lookup carry no
+  `Source.addNotification`, the notification daemon's source lookup and the
+  notification list's internals carry no
   stability promise. A GNOME refactor could make banners stop appearing, or
   make the rules and rate limit inert, without anything being logged.
 - **The frosted backdrop only blurs windows and the wallpaper.** Over the

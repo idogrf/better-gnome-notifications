@@ -1,8 +1,9 @@
-/* Width, corner radius and background are set inline per banner from the
+/* Banners, and the notification list's entries when styled to match them
+   (.bn-listed). Width, corner radius and background are set inline from the
    settings; everything else lives here. Selectors are long on purpose, to
-   outrank shell themes, which style banners through `.message ...` chains. */
+   outrank shell themes, which style these through `.message ...` chains. */
 
-.message.notification-banner.bn-banner {
+.message.bn-card.bn-banner {
   margin: 10px;
   padding: 9px 12px 11px 10px;
   min-height: 0;
@@ -24,7 +25,7 @@
 }
 
 /* Critical: a red hairline, and a red glow in place of the shadow. */
-.message.notification-banner.bn-banner.bn-critical {
+.message.bn-card.bn-banner.bn-critical {
   border-color: rgba(255, 92, 92, 0.9);
 }
 
@@ -32,39 +33,48 @@
   box-shadow: 0 0 22px rgba(255, 70, 70, 0.45);
 }
 
+/* In the notification list the list spaces its entries, and there's no
+   shadow layer: a critical entry keeps only its red outline. The list sizes
+   entries by their minimum height, which St takes from min-height in place
+   of the content's, so the banners' 0 would collapse them. */
+.message-view .message.bn-card.bn-listed {
+  margin: 0 0 8px 0;
+  min-height: auto;
+}
+
 /* The line that shrinks as a banner's time runs out. */
-.message.notification-banner.bn-banner .bn-countdown {
+.message.bn-card.bn-banner .bn-countdown {
   height: 2px;
   margin-top: 8px;
   border-radius: 1px;
   background-color: rgba(244, 246, 250, 0.35);
 }
 
-.message.notification-banner.bn-light .bn-countdown {
+.message.bn-card.bn-light .bn-countdown {
   background-color: rgba(27, 29, 34, 0.3);
 }
 
-.message.notification-banner.bn-banner .message-header {
+.message.bn-card.bn-banner .message-header {
   padding: 0;
   spacing: 6px;
 }
 
-.message.notification-banner.bn-banner .message-header .message-source-icon {
+.message.bn-card.bn-banner .message-header .message-source-icon {
   icon-size: 14px;
 }
 
-.message.notification-banner.bn-banner .message-header .message-header-content {
+.message.bn-card.bn-banner .message-header .message-header-content {
   spacing: 6px;
   min-height: 0;
 }
 
-.message.notification-banner.bn-banner .message-header .message-header-content .message-source-title,
-.message.notification-banner.bn-banner .message-header .message-header-content .event-time {
+.message.bn-card.bn-banner .message-header .message-header-content .message-source-title,
+.message.bn-card.bn-banner .message-header .message-header-content .event-time {
   font-weight: 500;
   color: rgba(244, 246, 250, 0.55);
 }
 
-.message.notification-banner.bn-banner .message-header .message-close-button {
+.message.bn-card.bn-banner .message-header .message-close-button {
   padding: 2px;
   min-width: 0;
   min-height: 0;
@@ -72,37 +82,37 @@
   color: rgba(244, 246, 250, 0.7);
 }
 
-.message.notification-banner.bn-banner .message-box {
+.message.bn-card.bn-banner .message-box {
   padding: 4px 0 0 0;
   spacing: 10px;
 }
 
-.message.notification-banner.bn-banner .message-box .message-icon {
+.message.bn-card.bn-banner .message-box .message-icon {
   icon-size: 32px;
   border-radius: 8px;
   margin: 0;
 }
 
-.message.notification-banner.bn-banner .message-box .message-content {
+.message.bn-card.bn-banner .message-box .message-content {
   spacing: 1px;
   padding: 0;
 }
 
-.message.notification-banner.bn-banner .message-box .message-content .message-title {
+.message.bn-card.bn-banner .message-box .message-content .message-title {
   font-weight: 600;
   color: #f4f6fa;
 }
 
-.message.notification-banner.bn-banner .message-box .message-content .message-body {
+.message.bn-card.bn-banner .message-box .message-content .message-body {
   color: rgba(244, 246, 250, 0.75);
 }
 
-.message.notification-banner.bn-banner .notification-buttons-bin {
+.message.bn-card.bn-banner .notification-buttons-bin {
   padding-top: 8px;
   spacing: 6px;
 }
 
-.message.notification-banner.bn-banner .notification-button {
+.message.bn-card.bn-banner .notification-button {
   min-height: 28px;
   padding: 0 12px;
   border-radius: 8px;
@@ -113,63 +123,63 @@
   box-shadow: none;
 }
 
-.message.notification-banner.bn-banner .notification-button:hover {
+.message.bn-card.bn-banner .notification-button:hover {
   background-color: rgba(255, 255, 255, 0.18);
 }
 
 /* Text sizes */
 
-.message.notification-banner.bn-text-small .message-header .message-header-content .message-source-title,
-.message.notification-banner.bn-text-small .message-header .message-header-content .event-time {
+.message.bn-card.bn-text-small .message-header .message-header-content .message-source-title,
+.message.bn-card.bn-text-small .message-header .message-header-content .event-time {
   font-size: 11px;
 }
-.message.notification-banner.bn-text-small .message-box .message-content .message-title {
+.message.bn-card.bn-text-small .message-box .message-content .message-title {
   font-size: 13px;
 }
-.message.notification-banner.bn-text-small .message-box .message-content .message-body {
+.message.bn-card.bn-text-small .message-box .message-content .message-body {
   font-size: 12.5px;
 }
 
-.message.notification-banner.bn-text-medium .message-header .message-header-content .message-source-title,
-.message.notification-banner.bn-text-medium .message-header .message-header-content .event-time {
+.message.bn-card.bn-text-medium .message-header .message-header-content .message-source-title,
+.message.bn-card.bn-text-medium .message-header .message-header-content .event-time {
   font-size: 11.5px;
 }
-.message.notification-banner.bn-text-medium .message-box .message-content .message-title {
+.message.bn-card.bn-text-medium .message-box .message-content .message-title {
   font-size: 14px;
 }
-.message.notification-banner.bn-text-medium .message-box .message-content .message-body {
+.message.bn-card.bn-text-medium .message-box .message-content .message-body {
   font-size: 13.5px;
 }
 
 /* Light tone */
 
-.message.notification-banner.bn-banner.bn-light {
+.message.bn-card.bn-banner.bn-light {
   color: #1b1d22;
   border-color: rgba(0, 0, 0, 0.1);
 }
 
-.message.notification-banner.bn-light .message-header .message-header-content .message-source-title,
-.message.notification-banner.bn-light .message-header .message-header-content .event-time {
+.message.bn-card.bn-light .message-header .message-header-content .message-source-title,
+.message.bn-card.bn-light .message-header .message-header-content .event-time {
   color: rgba(27, 29, 34, 0.55);
 }
 
-.message.notification-banner.bn-light .message-header .message-close-button {
+.message.bn-card.bn-light .message-header .message-close-button {
   color: rgba(27, 29, 34, 0.7);
 }
 
-.message.notification-banner.bn-light .message-box .message-content .message-title {
+.message.bn-card.bn-light .message-box .message-content .message-title {
   color: #1b1d22;
 }
 
-.message.notification-banner.bn-light .message-box .message-content .message-body {
+.message.bn-card.bn-light .message-box .message-content .message-body {
   color: rgba(27, 29, 34, 0.75);
 }
 
-.message.notification-banner.bn-light .notification-button {
+.message.bn-card.bn-light .notification-button {
   color: #1b1d22;
   background-color: rgba(0, 0, 0, 0.07);
 }
 
-.message.notification-banner.bn-light .notification-button:hover {
+.message.bn-card.bn-light .notification-button:hover {
   background-color: rgba(0, 0, 0, 0.13);
 }
