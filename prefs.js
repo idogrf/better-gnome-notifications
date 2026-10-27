@@ -1,5 +1,4 @@
 import Adw from 'gi://Adw';
-import Cairo from 'cairo';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
@@ -325,36 +324,39 @@ class Preview extends Gtk.Widget {
         snapshot.append_outset_shadow(rounded(0, 0, width, height, radius),
             rgba([0, 0, 0], front ? 0.32 : 0.22), 0, front ? 8 : 4, 0, front ? 24 : 12);
 
+        // Drawn with render nodes rather than Cairo: a Cairo node under the
+        // preview's scale lands offset by the card's position times the
+        // scale a second time, pulling the fill away from the text.
         const ink = INK[tone];
-        const cr = snapshot.append_cairo(rect(0, 0, width, height));
-        roundedPath(cr, 0.5, 0.5, width - 1, height - 1, radius);
+        const shape = rounded(0, 0, width, height, radius);
+        const bounds = rect(0, 0, width, height);
+        snapshot.push_rounded_clip(shape);
         if (card.color) {
-            const fill = new Cairo.LinearGradient(0, 0, width, 0);
             const start = tintStart(glass, card.color);
-            fill.addColorStopRGBA(0, start[0] / 255, start[1] / 255, start[2] / 255, start[3]);
-            fill.addColorStopRGBA(1, glass[0] / 255, glass[1] / 255, glass[2] / 255, glass[3]);
-            cr.setSource(fill);
+            snapshot.append_linear_gradient(bounds,
+                new Graphene.Point().init(0, 0), new Graphene.Point().init(width, 0), [
+                    new Gsk.ColorStop({offset: 0, color: rgba(start, start[3])}),
+                    new Gsk.ColorStop({offset: 1, color: rgba(glass, glass[3])}),
+                ]);
         } else {
-            setSource(cr, glass);
+            snapshot.append_color(rgba(glass, glass[3]), bounds);
         }
-        cr.fillPreserve();
-        setSource(cr, tone === 'dark' ? [255, 255, 255, 0.09] : [0, 0, 0, 0.1]);
-        cr.setLineWidth(1);
-        cr.stroke();
+        snapshot.pop();
+        const edge = tone === 'dark' ? rgba([255, 255, 255], 0.09) : rgba([0, 0, 0], 0.1);
+        snapshot.append_border(shape, [1, 1, 1, 1], [edge, edge, edge, edge]);
 
         if (layouts) {
-            roundedPath(cr, 11, 12, text.icon, text.icon, 8);
-            setSource(cr, card.color ? [...card.color, 1] : [...ink, 0.16]);
-            cr.fill();
+            snapshot.push_rounded_clip(rounded(11, 12, text.icon, text.icon, 8));
+            snapshot.append_color(card.color ? rgba(card.color) : rgba(ink, 0.16),
+                rect(11, 12, text.icon, text.icon));
+            snapshot.pop();
 
             if (countdown) {
                 const lineWidth = width - 11 - 13;
-                setSource(cr, [...ink, 0.35]);
-                cr.rectangle(11, height - 12 - 2, lineWidth * card.countdown, 2);
-                cr.fill();
+                snapshot.append_color(rgba(ink, 0.35),
+                    rect(11, height - 12 - 2, lineWidth * card.countdown, 2));
             }
         }
-        cr.$dispose();
 
         if (!layouts)
             return;
