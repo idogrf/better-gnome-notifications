@@ -46,7 +46,10 @@ This one takes the banner over entirely: position, look, timing and stacking.
   app's notifications together; this turns that off. Configurable.
 
 Do Not Disturb and fullscreen still let only critical notifications through,
-and banners hide while the notification list is open.
+and banners hide while the notification list is open. Notifications that
+arrive while the screen is locked show as banners once it unlocks; for that
+the extension keeps running on the lock screen (without showing anything
+there), since GNOME would otherwise queue them and show stock banners.
 
 ## Install
 

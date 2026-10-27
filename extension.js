@@ -21,6 +21,13 @@ export default class BetterGnomeNotificationsExtension extends Extension {
 
         this._deck = new Deck(this._settings);
 
+        // Notifications that arrived while the screen was locked, shown once
+        // it unlocks. The extension keeps running while locked for this: if
+        // it were disabled, gnome-shell's own tray would queue them and show
+        // them as stock banners on unlock.
+        this._held = [];
+        Main.sessionMode.connectObject('updated', () => this._showHeld(), this);
+
         this._injections = new InjectionManager();
         this._injectAddNotification();
         this._injectBanners();
@@ -33,6 +40,9 @@ export default class BetterGnomeNotificationsExtension extends Extension {
 
         this._deck.destroy();
         this._deck = null;
+
+        Main.sessionMode.disconnectObject(this);
+        this._held = null;
 
         this._settings.disconnectObject(this);
         this._settings = null;
@@ -106,6 +116,10 @@ export default class BetterGnomeNotificationsExtension extends Extension {
                     return;
                 if (!notification.source.policy.showBanners && notification.urgency !== Urgency.CRITICAL)
                     return;
+                if (Main.sessionMode.isLocked) {
+                    extension._hold(notification);
+                    return;
+                }
                 if (!Main.sessionMode.hasNotifications)
                     return;
 
@@ -115,6 +129,28 @@ export default class BetterGnomeNotificationsExtension extends Extension {
 
                 extension._deck.add(notification, extension._ruleFor.get(notification)?.color ?? null);
             });
+    }
+
+    // Only the newest few are kept: the deck couldn't show more at once.
+    _hold(notification) {
+        if (this._held.includes(notification))
+            return;
+        this._held.push(notification);
+        this._held.splice(0, this._held.length - this._settings.get_int('max-cards'));
+    }
+
+    // Requests banners for the held notifications again, oldest first so the
+    // newest ends up in front, skipping any dismissed or read while locked.
+    _showHeld() {
+        if (!Main.sessionMode.hasNotifications || this._held.length === 0)
+            return;
+
+        const held = this._held;
+        this._held = [];
+        for (const notification of held) {
+            if (notification.source?.notifications.includes(notification))
+                Main.messageTray._onNotificationRequestBanner(notification.source, notification);
+        }
     }
 
     // GNOME keeps one source per app, which the notification list shows as a
