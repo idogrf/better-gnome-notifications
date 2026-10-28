@@ -156,9 +156,10 @@ export class Deck {
             this);
         notification.connectObject('activated', () => this._remove(card), card.actor);
         card.actor.connect('notify::hover', () => this._onHover());
-        // A right click clears the card, as its close button does. The
-        // banner only takes primary clicks, so these reach the card.
-        card.actor.connect('button-release-event', (_actor, event) => {
+        // A right click clears the card, as its close button does. Handled
+        // on press: the banner's click gesture takes every button and
+        // claims the release, so a release never reaches the card.
+        card.actor.connect('button-press-event', (_actor, event) => {
             if (event.get_button() !== Clutter.BUTTON_SECONDARY)
                 return Clutter.EVENT_PROPAGATE;
             card.banner.close();
