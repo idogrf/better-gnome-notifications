@@ -1,6 +1,8 @@
 import Clutter from 'gi://Clutter';
 import Cogl from 'gi://Cogl';
+import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
+import Meta from 'gi://Meta';
 import Shell from 'gi://Shell';
 
 const BLUR_RADIUS = 30;
@@ -75,6 +77,7 @@ export class FrostedBackdrop {
         // Clipped to its allocation so the blur only processes the area
         // around the banner, not the whole clone.
         this._pane = new Clutter.Actor({clip_to_allocation: true, x: -BLEED, y: -BLEED});
+        this._resizeId = 0;
         this._pane.add_effect(new Shell.BlurEffect({
             mode: Shell.BlurMode.ACTOR,
             radius: BLUR_RADIUS,
@@ -86,6 +89,11 @@ export class FrostedBackdrop {
         this._pane.add_child(this._clone);
 
         this.actor.connect('notify::allocation', () => this._sync());
+        this.actor.connect('destroy', () => {
+            if (this._resizeId)
+                global.compositor.get_laters().remove(this._resizeId);
+            this._resizeId = 0;
+        });
         mover.connectObject(
             'notify::translation-x', () => this._sync(),
             'notify::translation-y', () => this._sync(),
@@ -98,14 +106,24 @@ export class FrostedBackdrop {
         const [x, y] = this.actor.get_transformed_position();
         if (!Number.isFinite(x) || !Number.isFinite(y))
             return;
-        // Only resized when the banner is, and the clone moved by
-        // translation: setting either's geometry on every frame of an
-        // animation leaves them waiting for a relayout each frame.
-        const width = this.actor.width + 2 * BLEED;
-        const height = this.actor.height + 2 * BLEED;
-        if (this._pane.width !== width || this._pane.height !== height)
-            this._pane.set_size(width, height);
+        // This runs during allocation and on every frame of an animation, so
+        // the clone moves by translation, which needs no relayout, and the
+        // pane is resized before the next frame's layout instead of now:
+        // resizing from inside a layout leaves the backdrop waiting for an
+        // allocation, and Clutter warns about it.
         this._clone.set_translation(BLEED - x, BLEED - y, 0);
+        if (this._resizeId === 0 && !this._fits()) {
+            this._resizeId = global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
+                this._resizeId = 0;
+                this._pane.set_size(this.actor.width + 2 * BLEED, this.actor.height + 2 * BLEED);
+                return GLib.SOURCE_REMOVE;
+            });
+        }
+    }
+
+    _fits() {
+        return this._pane.width === this.actor.width + 2 * BLEED &&
+            this._pane.height === this.actor.height + 2 * BLEED;
     }
 
     destroy() {
