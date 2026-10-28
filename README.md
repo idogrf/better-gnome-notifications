@@ -9,6 +9,8 @@ It also replaces what Notification Configurator was used for here: rate
 limiting banner bursts, filtering notifications by rule, and keeping one
 notification-list entry per notification.
 
+<img src="docs/images/stack.webp" width="440" alt="A burst of five notifications stacking up, fanning out on hover, then timing out; the critical one stays">
+
 ## Why this exists
 
 GNOME's banners are wide, centered at the top, and show one at a time. A burst
@@ -50,6 +52,8 @@ This one takes the banner over entirely: position, look, timing and stacking.
   shows as plain glass there, since the menu is solid behind them. The media
   player stays as GNOME draws it. Can be turned off.
 
+  <img src="docs/images/notification-list.png" width="520" alt="The date menu's notification list with entries in each app's color">
+
 Do Not Disturb and fullscreen still let only critical notifications through,
 and banners hide while the notification list is open. Notifications that
 arrive while the screen is locked show as banners once it unlocks; for that
@@ -83,6 +87,8 @@ better-gnome-notifications@idogr`.
 
 Each page opens with a preview: a corner of your wallpaper with the stack
 drawn in the chosen position, look and size, redrawn as you change settings.
+
+<img src="docs/images/settings-apps.png" width="480" alt="The Apps page: the default rules, each with its color and a Test button">
 
 - **Appearance:** position, material and tone as picture choices; text size,
   width, corner radius, color style and entrance.
