@@ -75,8 +75,9 @@ export class FrostedBackdrop {
         }));
 
         // Clipped to its allocation so the blur only processes the area
-        // around the banner, not the whole clone.
-        this._pane = new Clutter.Actor({clip_to_allocation: true, x: -BLEED, y: -BLEED});
+        // around the banner, not the whole clone. Hidden until it is first
+        // sized: blurring a 0x0 pane makes Cogl warn about a 0-wide texture.
+        this._pane = new Clutter.Actor({clip_to_allocation: true, x: -BLEED, y: -BLEED, visible: false});
         this._resizeId = 0;
         this._pane.add_effect(new Shell.BlurEffect({
             mode: Shell.BlurMode.ACTOR,
@@ -116,6 +117,7 @@ export class FrostedBackdrop {
             this._resizeId = global.compositor.get_laters().add(Meta.LaterType.BEFORE_REDRAW, () => {
                 this._resizeId = 0;
                 this._pane.set_size(this.actor.width + 2 * BLEED, this.actor.height + 2 * BLEED);
+                this._pane.show();
                 return GLib.SOURCE_REMOVE;
             });
         }
