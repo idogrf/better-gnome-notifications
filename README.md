@@ -31,6 +31,7 @@ This one takes the banner over entirely: position, look, timing and stacking.
   keyboard.
 - **Hover.** Hovering the stack fans it out into a column and pauses every
   timer. The card under the pointer expands to show its full body and buttons.
+  Right-clicking a card clears it, like its close button.
 - **Look.** Front card frosted (a blurred view of what's behind it), cards
   behind it plain glass. Dark or light tone, two text sizes, width and corner
   radius. Banners slide in from the screen edge.

@@ -156,6 +156,14 @@ export class Deck {
             this);
         notification.connectObject('activated', () => this._remove(card), card.actor);
         card.actor.connect('notify::hover', () => this._onHover());
+        // A right click clears the card, as its close button does. The
+        // banner only takes primary clicks, so these reach the card.
+        card.actor.connect('button-release-event', (_actor, event) => {
+            if (event.get_button() !== Clutter.BUTTON_SECONDARY)
+                return Clutter.EVENT_PROPAGATE;
+            card.banner.close();
+            return Clutter.EVENT_STOP;
+        });
 
         this.actor.add_child(card.actor);
         this._cards.unshift(card);
