@@ -351,6 +351,10 @@ export class Deck {
         if (expired && card.notification.isTransient)
             card.notification.destroy(NotificationDestroyedReason.EXPIRED);
 
+        // A card stops reporting the pointer once it's removed, so if it was
+        // the one under the pointer the deck would never hear the pointer
+        // leave, and would stay fanned with every timer paused.
+        this._onHover();
         this._layout();
     }
 
