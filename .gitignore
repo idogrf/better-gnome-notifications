@@ -1,2 +1,4 @@
 # build output — regenerate with: glib-compile-schemas schemas/
 schemas/gschemas.compiled
+# release zip — build with: ./pack.sh
+dist/
