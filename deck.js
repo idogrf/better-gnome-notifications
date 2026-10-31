@@ -277,7 +277,14 @@ export class Deck {
         const {width: workWidth, height: workHeight} =
             Main.layoutManager.getWorkAreaForMonitor(Main.layoutManager.primaryIndex);
         const max = this._settings.get_int('max-cards');
-        const heights = this._cards.map(card => card.banner.height);
+        // Each banner's preferred height, not its allocated one: while it
+        // expands or folds, the allocation lags a frame behind, and after the
+        // last frame nothing would lay the deck out again.
+        const heights = this._cards.map(card => {
+            const [, width] = card.actor.get_preferred_width(-1);
+            const [, height] = card.actor.get_preferred_height(width);
+            return height - card.banner.margin_top - card.banner.margin_bottom;
+        });
         const frontHeight = heights[0] ?? 0;
         const peek = max > 1 ? SPREAD * frontHeight / (max - 1) : 0;
 
