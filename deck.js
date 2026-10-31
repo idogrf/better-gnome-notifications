@@ -62,12 +62,10 @@ class Card {
         // The card's drop shadow, drawn by a rounded widget with no fill
         // under the banner. On the banner itself St draws a square shadow
         // (its fill is a gradient or see-through), which shows around the
-        // corners and through the glass.
-        this.shadow = new St.Widget({style_class: 'bn-card-shadow'});
-        this.shadow.add_constraint(new Clutter.BindConstraint({
-            source: this.banner,
-            coordinate: Clutter.BindCoordinate.ALL,
-        }));
+        // corners and through the glass. It covers the banner by filling the
+        // card with the same margin (stylesheet.css), so the card's layout
+        // places both in the same pass.
+        this.shadow = new St.Widget({style_class: 'bn-card-shadow', x_expand: true, y_expand: true});
         this.actor.insert_child_below(this.shadow, this.banner);
 
         this.backdrop = null;

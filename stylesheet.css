@@ -13,8 +13,10 @@
 }
 
 /* Shadows come from a separate rounded layer under each banner
-   (.bn-card-shadow): on the banner itself St draws them square. */
+   (.bn-card-shadow): on the banner itself St draws them square. Its margin
+   must match the banner's, so it covers the banner exactly. */
 .bn-card-shadow {
+  margin: 10px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
 }
 

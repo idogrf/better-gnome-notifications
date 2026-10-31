@@ -62,17 +62,25 @@ class RoundedMask extends Shell.GLSLEffect {
  * this blurs a live clone of the window group instead, offset so the part
  * under the banner lines up with the real desktop, and masks that.
  *
- * Add `actor` to the banner's parent below the banner; it follows the
- * banner's allocation, and the clone follows `mover`'s movement.
+ * Add `actor` to the banner's parent below the banner, in a layout that
+ * fills both; it takes the banner's margin so it covers the banner, and the
+ * clone follows `mover`'s movement.
  */
 export class FrostedBackdrop {
     constructor(banner, radius, mover) {
-        this.actor = new Clutter.Actor({clip_to_allocation: true});
+        // Stretched to fill the card, with a fixed preferred size of 0 so the
+        // bleeding pane inside doesn't make the card bigger.
+        this.actor = new Clutter.Actor({
+            clip_to_allocation: true,
+            x_expand: true, y_expand: true,
+            min_width: 0, natural_width: 0, min_height: 0, natural_height: 0,
+        });
         this.actor.add_effect(new RoundedMask(radius));
-        this.actor.add_constraint(new Clutter.BindConstraint({
-            source: banner,
-            coordinate: Clutter.BindCoordinate.ALL,
-        }));
+        // Margins, not a BindConstraint: a constraint reads the banner's
+        // allocation while the banner is still waiting for its own, after it
+        // expands, and then leaves the backdrop filling the whole card.
+        for (const side of ['top', 'right', 'bottom', 'left'])
+            banner.bind_property(`margin-${side}`, this.actor, `margin-${side}`, GObject.BindingFlags.SYNC_CREATE);
 
         // Clipped to its allocation so the blur only processes the area
         // around the banner, not the whole clone. Hidden until it is first
