@@ -437,9 +437,12 @@ export class Deck {
             this._foldId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, FOLD_DELAY, () => {
                 this._foldId = 0;
                 this._fanned = false;
+                // Expanded cards collapse at once, so the deck slides into
+                // place in one movement: an animated collapse changes their
+                // height every frame, and each change restarts the slide.
                 this._cards.forEach(card => {
                     if (!card.critical)
-                        card.banner.unexpand(true);
+                        card.banner.unexpand(false);
                     this._startTimer(card);
                 });
                 this._layout();
