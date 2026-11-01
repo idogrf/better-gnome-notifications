@@ -168,8 +168,7 @@ export class Deck {
         this._cards.unshift(card);
         this._styleCard(card);
 
-        if (card.critical || notification.source.policy.forceExpanded)
-            card.banner.expand(false);
+        card.openExpanded = card.critical || notification.source.policy.forceExpanded;
 
         // Start at its resting place, off-screen, then slide in from there.
         this._layout(false, card);
@@ -277,6 +276,25 @@ export class Deck {
         const {width: workWidth, height: workHeight} =
             Main.layoutManager.getWorkAreaForMonitor(Main.layoutManager.primaryIndex);
         const max = this._settings.get_int('max-cards');
+        // Critical cards, and those the app asks to show expanded, are
+        // expanded only at the front or fanned out: behind the front card an
+        // expanded card is taller than the stack and sticks out above it.
+        this._cards.forEach((card, i) => {
+            if (!card.openExpanded)
+                return;
+            if (i === 0 || this._fanned)
+                card.banner.expand(false);
+            else if (card.banner.expanded)
+                card.banner.unexpand(false);
+        });
+        // While stacked, the cards behind take the front card's height: they
+        // only show an edge, and their content (a script with taller lines,
+        // say) would otherwise make some stick out above the front card.
+        // Measuring needs the others' own heights, so they're released first.
+        this._cards.forEach((card, i) => {
+            if ((i === 0 || this._fanned) && card.banner.natural_height_set)
+                card.banner.height = -1;
+        });
         // Each banner's preferred height, not its allocated one: while it
         // expands or folds, the allocation lags a frame behind, and after the
         // last frame nothing would lay the deck out again.
@@ -286,6 +304,15 @@ export class Deck {
             return height - card.banner.margin_top - card.banner.margin_bottom;
         });
         const frontHeight = heights[0] ?? 0;
+        if (!this._fanned) {
+            this._cards.forEach((card, i) => {
+                if (i === 0)
+                    return;
+                if (!card.banner.natural_height_set || card.banner.natural_height !== frontHeight)
+                    card.banner.height = frontHeight;
+                heights[i] = frontHeight;
+            });
+        }
         const peek = max > 1 ? SPREAD * frontHeight / (max - 1) : 0;
 
         let offset = 0;
@@ -441,7 +468,7 @@ export class Deck {
                 // place in one movement: an animated collapse changes their
                 // height every frame, and each change restarts the slide.
                 this._cards.forEach(card => {
-                    if (!card.critical)
+                    if (!card.openExpanded)
                         card.banner.unexpand(false);
                     this._startTimer(card);
                 });
